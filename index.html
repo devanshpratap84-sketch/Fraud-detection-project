@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fraud Detection System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            min-height: 100vh;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #cbd5e1;
+            font-size: 16px;
+        }
+
+        .card {
+            background: #ffffff;
+            color: #1e293b;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input {
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .predict-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .predict-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .reset-btn {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        .result h2 {
+            margin-bottom: 10px;
+        }
+
+        .result p {
+            margin: 6px;
+        }
+
+        .safe {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .fraud {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .loading {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+            color: #475569;
+        }
+
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>💳 Fraud Detection System</h1>
+        <p>Machine Learning Based Credit Card Transaction Analysis</p>
+    </div>
+
+    <div class="card">
+
+        <h2 class="section-title">Transaction Details</h2>
+
+        <form id="fraudForm">
+
+            <div class="form-grid" id="formFields">
+
+                <!-- Time -->
+                <div class="input-group">
+                    <label for="Time">Time</label>
+                    <input type="number" step="any" id="Time" name="Time" value="0" required>
+                </div>
+
+                <!-- V1 to V28 -->
+                <div class="input-group">
+                    <label for="V1">V1</label>
+                    <input type="number" step="any" id="V1" name="V1" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V2">V2</label>
+                    <input type="number" step="any" id="V2" name="V2" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V3">V3</label>
+                    <input type="number" step="any" id="V3" name="V3" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V4">V4</label>
+                    <input type="number" step="any" id="V4" name="V4" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V5">V5</label>
+                    <input type="number" step="any" id="V5" name="V5" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V6">V6</label>
+                    <input type="number" step="any" id="V6" name="V6" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V7">V7</label>
+                    <input type="number" step="any" id="V7" name="V7" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V8">V8</label>
+                    <input type="number" step="any" id="V8" name="V8" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V9">V9</label>
+                    <input type="number" step="any" id="V9" name="V9" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V10">V10</label>
+                    <input type="number" step="any" id="V10" name="V10" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V11">V11</label>
+                    <input type="number" step="any" id="V11" name="V11" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V12">V12</label>
+                    <input type="number" step="any" id="V12" name="V12" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V13">V13</label>
+                    <input type="number" step="any" id="V13" name="V13" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V14">V14</label>
+                    <input type="number" step="any" id="V14" name="V14" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V15">V15</label>
+                    <input type="number" step="any" id="V15" name="V15" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V16">V16</label>
+                    <input type="number" step="any" id="V16" name="V16" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V17">V17</label>
+                    <input type="number" step="any" id="V17" name="V17" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V18">V18</label>
+                    <input type="number" step="any" id="V18" name="V18" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V19">V19</label>
+                    <input type="number" step="any" id="V19" name="V19" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V20">V20</label>
+                    <input type="number" step="any" id="V20" name="V20" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V21">V21</label>
+                    <input type="number" step="any" id="V21" name="V21" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V22">V22</label>
+                    <input type="number" step="any" id="V22" name="V22" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V23">V23</label>
+                    <input type="number" step="any" id="V23" name="V23" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V24">V24</label>
+                    <input type="number" step="any" id="V24" name="V24" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V25">V25</label>
+                    <input type="number" step="any" id="V25" name="V25" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V26">V26</label>
+                    <input type="number" step="any" id="V26" name="V26" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V27">V27</label>
+                    <input type="number" step="any" id="V27" name="V27" value="0" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="V28">V28</label>
+                    <input type="number" step="any" id="V28" name="V28" value="0" required>
+                </div>
+
+                <!-- Amount -->
+                <div class="input-group">
+                    <label for="Amount">Amount</label>
+                    <input type="number" step="any" id="Amount" name="Amount" value="100" required>
+                </div>
+
+            </div>
+
+            <div class="buttons">
+                <button type="submit" class="predict-btn">
+                    🔍 Check Transaction
+                </button>
+
+                <button type="reset" class="reset-btn">
+                    Reset
+                </button>
+            </div>
+
+        </form>
+
+        <div class="loading" id="loading">
+            Analyzing transaction...
+        </div>
+
+        <div class="result" id="result">
+            <h2 id="resultTitle"></h2>
+            <p id="probability"></p>
+            <p id="risk"></p>
+        </div>
+
+        <div class="info">
+            <strong>Note:</strong>
+            V1–V28 are anonymized PCA-transformed features from the
+            Credit Card Fraud Detection dataset. The system uses the trained
+            machine-learning model to estimate fraud probability.
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+    const form = document.getElementById("fraudForm");
+    const result = document.getElementById("result");
+    const loading = document.getElementById("loading");
+
+    form.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        loading.style.display = "block";
+        result.style.display = "none";
+
+        // Collect form data
+        const formData = new FormData(form);
+
+        const transaction = {};
+
+        formData.forEach((value, key) => {
+            transaction[key] = Number(value);
+        });
+
+        try {
+
+            const response = await fetch("/predict", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(transaction)
+
+            });
+
+            const data = await response.json();
+
+            loading.style.display = "none";
+            result.style.display = "block";
+
+            if (!response.ok) {
+                throw new Error(data.error || "Prediction failed");
+            }
+
+            const probabilityValue =
+                data.fraud_probability * 100;
+
+            document.getElementById("probability").innerText =
+                "Fraud Probability: " +
+                probabilityValue.toFixed(2) +
+                "%";
+
+            document.getElementById("risk").innerText =
+                "Risk Level: " +
+                data.risk_level;
+
+            const title = document.getElementById("resultTitle");
+
+            if (data.prediction === 1) {
+
+                title.innerText =
+                    "🚨 Potential Fraud Detected";
+
+                result.className = "result fraud";
+
+            } else {
+
+                title.innerText =
+                    "✅ Transaction Appears Legitimate";
+
+                result.className = "result safe";
+            }
+
+        } catch (error) {
+
+            loading.style.display = "none";
+            result.style.display = "block";
+
+            result.className = "result fraud";
+
+            document.getElementById("resultTitle").innerText =
+                "❌ Error";
+
+            document.getElementById("probability").innerText =
+                error.message;
+
+            document.getElementById("risk").innerText = "";
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
