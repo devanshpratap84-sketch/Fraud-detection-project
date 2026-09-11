@@ -1,0 +1,418 @@
+FRAUD DETECTION SYSTEM
+Major Project Report
+
+Project Title:
+Credit Card Fraud Detection Using Machine Learning
+
+Submitted By:
+Name: ______________________________
+Course/Branch: _____________________
+Year/Semester: _____________________
+Roll No.: ___________________________
+College: ____________________________
+Academic Session: 2026-27
+
+------------------------------------------------------------
+ABSTRACT
+------------------------------------------------------------
+
+Credit-card fraud is a major financial and security problem. A fraud detection
+system must identify suspicious transactions while minimizing false alarms.
+This project develops a machine-learning based Fraud Detection System using
+the ULB Credit Card Fraud Detection dataset. The project studies both
+supervised classification and unsupervised anomaly detection.
+
+Logistic Regression and Random Forest are used as supervised classification
+models. Because fraudulent transactions are extremely rare compared with
+legitimate transactions, the project uses imbalance-aware class weighting,
+stratified splitting and threshold tuning. Performance is evaluated using
+precision, recall, F1-score, ROC-AUC and Precision-Recall AUC (PR-AUC), rather
+than relying only on accuracy.
+
+Isolation Forest is additionally implemented as an anomaly-detection method.
+The final system produces fraud probabilities, fraud predictions and business
+risk levels (Low, Medium, High and Critical). The project demonstrates the
+complete machine-learning workflow from data loading and exploratory analysis
+to model training, evaluation and risk interpretation.
+
+------------------------------------------------------------
+1. INTRODUCTION
+------------------------------------------------------------
+
+Digital payments have increased the importance of automatic transaction
+monitoring. Fraudulent transactions can cause direct financial losses,
+chargebacks, customer dissatisfaction and reputational damage.
+
+Manual checking of every transaction is not practical at large scale.
+Machine learning can learn patterns from historical transactions and assign
+a probability or risk score to new transactions.
+
+The selected ULB/Kaggle dataset contains anonymized credit-card transactions.
+It has 284,807 transactions, of which 492 are fraudulent. Fraud therefore
+represents only about 0.172% of the transactions. The features V1 to V28 are
+PCA-transformed numerical variables; Time and Amount are also provided, and
+Class is the target variable.
+
+------------------------------------------------------------
+2. PROBLEM STATEMENT
+------------------------------------------------------------
+
+Fraudulent activities cause major financial losses. The goal is to develop
+a system that can identify fraudulent transactions using machine-learning
+techniques while handling severe class imbalance.
+
+------------------------------------------------------------
+3. OBJECTIVES
+------------------------------------------------------------
+
+1. Load and understand the credit-card transaction dataset.
+2. Perform exploratory data analysis.
+3. Handle the highly imbalanced target class.
+4. Train supervised classification models.
+5. Apply anomaly detection.
+6. Tune the classification threshold.
+7. Evaluate fraud-detection performance.
+8. Generate transaction risk levels.
+9. Interpret the results from a business-risk perspective.
+
+------------------------------------------------------------
+4. DATASET DESCRIPTION
+------------------------------------------------------------
+
+Dataset:
+Credit Card Fraud Detection - ULB / Kaggle
+
+Source:
+https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud
+
+Important columns:
+- Time: seconds elapsed between the transaction and the first transaction.
+- V1 to V28: anonymized PCA-transformed numerical features.
+- Amount: transaction amount.
+- Class: target; 0 = legitimate, 1 = fraud.
+
+Dataset characteristics:
+- Total transactions: 284,807
+- Fraudulent transactions: 492
+- Legitimate transactions: 284,315
+- Fraud rate: approximately 0.172%
+
+The target class is severely imbalanced. This is the central machine-learning
+challenge in the project.
+
+------------------------------------------------------------
+5. TECHNOLOGIES USED
+------------------------------------------------------------
+
+Programming Language:
+Python
+
+Libraries:
+- Pandas
+- NumPy
+- Matplotlib
+- Scikit-learn
+- Joblib
+- Jupyter Notebook (optional)
+
+Machine-learning techniques:
+- Logistic Regression
+- Random Forest Classification
+- Isolation Forest Anomaly Detection
+
+------------------------------------------------------------
+6. SYSTEM WORKFLOW
+------------------------------------------------------------
+
+Dataset
+   |
+   v
+Data Loading
+   |
+   v
+Data Validation
+   |
+   v
+Exploratory Data Analysis
+   |
+   v
+Train / Validation / Test Split
+   |
+   v
+Preprocessing + Scaling
+   |
+   v
+Imbalance Handling
+   |
+   +---------------------------+
+   |                           |
+   v                           v
+Logistic Regression       Random Forest
+   |                           |
+   +-------------+-------------+
+                 |
+                 v
+        Threshold Tuning
+                 |
+                 v
+          Final Evaluation
+                 |
+                 v
+      Fraud Probability / Risk
+                 |
+                 v
+          Business Decision
+
+Parallel:
+Isolation Forest -> Anomaly Score -> Fraud Alert
+
+------------------------------------------------------------
+7. DATA PREPROCESSING
+------------------------------------------------------------
+
+The dataset is loaded from CSV and checked for required columns and valid
+target labels.
+
+The target column `Class` is separated from the input features.
+
+The data is divided into:
+- Training set: 64%
+- Validation set: 16%
+- Test set: 20%
+
+The split is stratified so that the rare fraud class remains represented in
+each subset.
+
+For Logistic Regression, numerical features are imputed using the training
+median when necessary and standardized using StandardScaler. The scaler is
+fit only on training data and then applied to validation/test data. This
+prevents data leakage.
+
+------------------------------------------------------------
+8. HANDLING IMBALANCED DATA
+------------------------------------------------------------
+
+The fraud class is much smaller than the legitimate class. A model that
+predicts every transaction as legitimate could achieve very high accuracy
+while detecting no fraud.
+
+To address this:
+- Logistic Regression uses `class_weight='balanced'`.
+- Random Forest uses `class_weight='balanced_subsample'`.
+- Stratified train/validation/test splits are used.
+- The decision threshold is tuned on the validation set.
+- Precision, recall, F1 and PR-AUC are emphasized.
+
+PR-AUC is particularly informative for rare positive classes because it
+focuses on the precision-recall trade-off for fraud detection.
+
+------------------------------------------------------------
+9. MACHINE LEARNING MODELS
+------------------------------------------------------------
+
+9.1 Logistic Regression
+
+Logistic Regression estimates the probability that a transaction belongs to
+the fraud class.
+
+Advantages:
+- Simple and fast.
+- Easy to interpret.
+- Provides probabilities.
+- Useful as a baseline model.
+
+9.2 Random Forest
+
+Random Forest combines many decision trees and averages their predictions.
+It can learn nonlinear relationships and interactions between features.
+
+Advantages:
+- Handles nonlinear patterns.
+- Usually strong on tabular data.
+- Provides probability estimates.
+- Less sensitive to feature scaling than Logistic Regression.
+
+9.3 Isolation Forest
+
+Isolation Forest is an unsupervised anomaly-detection method. It attempts
+to isolate unusual observations quickly. Transactions identified as unusual
+are treated as anomaly/fraud alerts.
+
+This model is useful because in a real financial system new fraud patterns
+may appear that were not present in the historical labels.
+
+------------------------------------------------------------
+10. THRESHOLD TUNING
+------------------------------------------------------------
+
+A probability of 0.50 is not always the best decision boundary for fraud
+detection.
+
+The project checks thresholds from 0.05 to 0.95 on the validation set and
+selects the threshold that maximizes F1-score.
+
+This threshold is then applied once to the untouched test set.
+
+The advantage is that the project explicitly balances precision and recall
+instead of assuming that 0.50 is optimal.
+
+------------------------------------------------------------
+11. EVALUATION METRICS
+------------------------------------------------------------
+
+Precision:
+Of all transactions predicted as fraud, how many were actually fraud?
+
+Recall:
+Of all actual fraud transactions, how many were detected?
+
+F1-score:
+Harmonic mean of precision and recall.
+
+ROC-AUC:
+Measures ranking performance across classification thresholds.
+
+PR-AUC:
+Measures the precision-recall trade-off and is especially useful for highly
+imbalanced fraud-detection problems.
+
+Confusion Matrix:
+Shows true negatives, false positives, false negatives and true positives.
+
+For fraud detection, false negatives can be particularly costly because a
+fraudulent transaction may be missed.
+
+------------------------------------------------------------
+12. BUSINESS RISK INTERPRETATION
+------------------------------------------------------------
+
+The system converts predicted fraud probabilities into four risk levels:
+
+Low       : probability < 0.20
+Medium    : 0.20 to < 0.50
+High      : 0.50 to < 0.80
+Critical  : probability >= 0.80
+
+These levels are illustrative and should be calibrated using real business
+costs before deployment.
+
+A practical system could:
+- Allow low-risk transactions automatically.
+- Apply additional verification to medium-risk transactions.
+- Send high-risk transactions for review.
+- Temporarily block or strongly verify critical-risk transactions.
+
+------------------------------------------------------------
+13. RESULTS
+------------------------------------------------------------
+
+After running `python fraud_detection.py`, the following files are generated:
+
+1. outputs/metrics.json
+2. outputs/fraud_predictions.csv
+3. outputs/class_distribution.png
+4. outputs/amount_distribution.png
+5. outputs/logistic_regression_confusion_matrix.png
+6. outputs/random_forest_confusion_matrix.png
+7. outputs/roc_curves.png
+8. outputs/precision_recall_curves.png
+
+IMPORTANT:
+The numerical model results should be copied from `outputs/metrics.json`
+after the student runs the project on the downloaded dataset. No performance
+numbers are fabricated in this report.
+
+Results table to complete:
+
+| Model | Precision | Recall | F1 | ROC-AUC | PR-AUC |
+|-------|-----------|--------|----|---------|--------|
+| Logistic Regression | ______ | ______ | ______ | ______ | ______ |
+| Random Forest | ______ | ______ | ______ | ______ | ______ |
+| Isolation Forest | ______ | ______ | ______ | N/A | N/A |
+
+Best supervised model:
+____________________________
+
+Selected validation threshold:
+____________________________
+
+------------------------------------------------------------
+14. ADVANTAGES
+------------------------------------------------------------
+
+1. Handles severe class imbalance.
+2. Uses multiple machine-learning approaches.
+3. Uses validation-based threshold tuning.
+4. Uses fraud-focused evaluation metrics.
+5. Produces transaction-level risk levels.
+6. Includes both supervised and unsupervised approaches.
+7. Can be extended to real-time transaction scoring.
+
+------------------------------------------------------------
+15. LIMITATIONS
+------------------------------------------------------------
+
+1. The dataset is anonymized, so business meaning of V1-V28 is unavailable.
+2. The dataset represents historical transactions and may not represent
+   current fraud behavior.
+3. A model trained on this dataset should not be directly deployed in a real
+   bank without additional validation.
+4. Thresholds should be selected using actual financial costs.
+5. Fraud patterns can change over time, requiring model monitoring and
+   retraining.
+6. Isolation Forest is an anomaly detector, not proof that a transaction is
+   fraudulent.
+
+------------------------------------------------------------
+16. FUTURE SCOPE
+------------------------------------------------------------
+
+1. Add XGBoost or LightGBM for stronger tabular classification.
+2. Use cost-sensitive learning based on actual fraud losses.
+3. Add real-time streaming transaction detection.
+4. Build a Flask/FastAPI web application.
+5. Create a dashboard using Streamlit or Power BI.
+6. Add model explainability using SHAP.
+7. Monitor model drift.
+8. Retrain the model periodically with recent transactions.
+9. Combine supervised probability with anomaly score.
+10. Add human-review feedback to improve the model.
+
+------------------------------------------------------------
+17. CONCLUSION
+------------------------------------------------------------
+
+The project demonstrates a complete machine-learning pipeline for credit-card
+fraud detection. The main challenge is severe class imbalance, which makes
+accuracy an inadequate standalone metric. The project addresses this through
+imbalance-aware models, stratified data splitting, validation-based threshold
+tuning and fraud-focused metrics.
+
+Logistic Regression provides an interpretable baseline, Random Forest captures
+nonlinear patterns, and Isolation Forest provides an unsupervised anomaly
+detection approach. The final system produces fraud predictions and risk
+levels that can support transaction review.
+
+The project provides practical experience in Python, Pandas, Scikit-learn,
+data preprocessing, imbalanced classification, anomaly detection,
+model evaluation and business-risk interpretation.
+
+------------------------------------------------------------
+18. REFERENCES
+------------------------------------------------------------
+
+1. Kaggle - Credit Card Fraud Detection:
+   https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud
+
+2. Dal Pozzolo et al., "Calibrating Probability with Undersampling for
+   Unbalanced Classification", IEEE CIDM, 2015.
+
+3. Dal Pozzolo et al., "Learned lessons in credit card fraud detection from
+   a practitioner perspective", Expert Systems with Applications, 2014.
+
+4. Scikit-learn documentation:
+   https://scikit-learn.org/
+
+------------------------------------------------------------
+END OF REPORT
+------------------------------------------------------------
